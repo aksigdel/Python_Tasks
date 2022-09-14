@@ -1,6 +1,0 @@
-Questions:
-Create an API that returns  name, address( street | suite | city) , website based on user id.
-Create an API that updates name and username to upper case based on user id and return updated data.
-Create an API that delete record and display response message based on user id.
-Create an API that insert new record and display response message along with inserted data.
-Create an API to return  city count and status in JSON format.
