@@ -85,7 +85,8 @@ def update_anime(id):
         "genres": [
             "Adventure",
             "Mystery",
-            "childish"
+            "childish",
+            "ddetective"
         ],
         "ranking": 236,
         "type": "Movie",
@@ -124,7 +125,7 @@ def update_anime(id):
 def create_anime():
     #data=request.get_json() #according to the schema and id will be prev_data[-1]['id']+1
     data= {
-        "_id": 4487,
+        "_id": 44876,
         "alternativeTitles": [
             "Tensura 2",
             "\u8ee2\u751f\u3057\u305f\u3089\u30b9\u30e9\u30a4\u30e0\u3060\u3063\u305f\u4ef6",

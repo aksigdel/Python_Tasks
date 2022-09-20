@@ -15,21 +15,18 @@ dbuser, dbpass, dbhost, dbport, dbname = dbsecrets.dbuser, dbsecrets.dbpass, dbs
 def insert_program():
 #    data= request.get_json()
     data = [
-        {'program_id': 'BIT', 'name': 'Bachelors in Information Technology', 'num_years': 4}
+        {'program_id': 'BBT', 'name': 'Bachelors ', 'num_years': 4}
     ]
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    
+
     program = Table('program', metadata_obj, autoload=True, autoload_with=engine)
     stmt = insert(program)
     try:
         conn.execute(stmt,data)
-        session.add()
-        session.commit()
+
         return jsonify(
             {
             'status': 200,
@@ -51,9 +48,9 @@ def insert_program():
 def insert_semester():
 #    data= request.get_json()
     data= [
-        {'semester_id': 111, 'semester_num': 2, 'program_id': 'BCT'},
+        {'semester_id': 1110, 'semester_num': 2, 'program_id': 'BCT'},
     ]
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -82,10 +79,10 @@ def insert_semester():
 def insert_course():
     #data= request.get_json
     data = [
-        {'course_id': '14.00', 'name': 'Data Science', 'credit_hours': 45, 'marks': 80,'semester_id':102},
+        {'course_id': '16.00', 'name': 'Data Science', 'credit_hours': 45, 'marks': 80,'semester_id':102},
 
     ]
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -253,7 +250,7 @@ def insert_instructor():
 # retrieve all records of programs
 @app.route('/programs', methods=['GET'])
 def programs():
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -282,7 +279,7 @@ def programs():
 # retrieve all student records
 @app.route('/students', methods=['GET'])
 def students():
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -347,7 +344,7 @@ def instructors():
 # retrieve number of students in each program
 @app.route('/program/students', methods=['GET'])
 def program_students():
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -470,7 +467,7 @@ def section_students():
 #retrieve sections in each semester
 @app.route('/semester/section', methods=['GET'])
 def section_sem():
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -480,34 +477,40 @@ def section_sem():
     
     stmt = select([section])
     stmt = stmt.select_from(semester.join(section, semester.columns.semester_id == section.columns.semester_id))
-    stmt = stmt.group_by(section.columns.semester_id)
 
     results =conn.execute(stmt).fetchall()
-    for i in range(len(results)):
-            sem_lst=[]
-            sem_lst[i] = results[i].semester_id
-    print(sem_lst)
-    sem_tup=tuple(sem_lst)
+    sem_lst=[]
+    for record in results:
+            sem_lst.append( record.semester_id)
+    
+    sem_tup=list(set(sem_lst))
 
-    for i in range(len(sem_lst)):
+    final_dct= dict()
+    final_lst=[]
+    
+    for i in range(len(sem_tup)):
             semdct=dict()
             lst=[]
             for j in range (len(results)):
                 if sem_tup[i]==results[j].semester_id:
                     semdct['semester_id']=results[j].semester_id
                     section_dict = dict()
-                    section_dict['section_id'] = results[i].section_id
-                    section_dict['room'] = results[i].room
-                    lst.append(section_dict)   
-            return jsonify({
-            'section': lst,
-            'semester':semdct
+                    section_dict['section_id'] = results[j].section_id
+                    section_dict['room'] = results[j].room
+                    lst.append(section_dict)  
+            final_dct={
+                'semester_id':sem_tup[i],
+                'section': lst
+            }
+            final_lst.append(final_dct)
+    return jsonify({
+            'output': final_lst
         })
             
 #retrieve course in each semester
 @app.route('/semester/course', methods=['GET'])
 def course_sem():
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -517,33 +520,38 @@ def course_sem():
     
     stmt = select([course])
     stmt = stmt.select_from(semester.join(course, semester.columns.semester_id == course.columns.semester_id))
-    stmt = stmt.group_by(course.columns.semester_id)
 
     results =conn.execute(stmt).fetchall()
+    print(results)
+    sem_lst=[]
     for i in range(len(results)):
-            sem_lst=[]
-            sem_lst[i] = results[i].semester_id
-    sem_tup=tuple(sem_lst)
-
-    for i in range(len(sem_lst)):
+            sem_lst.append(results[i].semester_id)
+    sem_tup=list(set(sem_lst))
+    final_dct= dict()
+    final_lst=[]
+    for i in range(len(sem_tup)):
             semdct=dict()
             lst=[]
             for j in range (len(results)):
                 if sem_tup[i]==results[j].semester_id:
                     semdct['semester_id']=results[j].semester_id
-                    section_dict = dict()
-                    section_dict['section_id'] = results[i].section_id
-                    section_dict['room'] = results[i].room
-                    lst.append(section_dict)   
-            return jsonify({
-            'section': lst,
-            'semester':semdct
+                    course_dict = dict()
+                    course_dict['course_id'] = results[j].course_id
+                    course_dict['name'] = results[j].name
+                    lst.append(course_dict)   
+            final_dct={
+                'semester_id':sem_tup[i],
+                'course': lst
+            }
+            final_lst.append(final_dct)
+    return jsonify({
+            'output': final_lst
         })
             
-#retrieve course in each semester
+#retrieve instructor in each semester
 @app.route('/semester/instructor', methods=['GET'])
 def instructor_sem():
-    engine = create_engine(f'mysql+pymysql://root:@127.0.0.1:3306/LMS',echo=True)
+    engine = create_engine(f'mysql+pymysql://root:Aksheysigdel$10@127.0.0.1:3306/LMS',echo=True)
     conn = engine.connect()
     metadata_obj = MetaData(bind=engine)
     MetaData.reflect(metadata_obj)
@@ -552,33 +560,39 @@ def instructor_sem():
     course = Table('course', metadata_obj, autoload=True, autoload_with=engine)
     instructor = Table('instructor', metadata_obj, autoload=True, autoload_with=engine)
     
-    stmt = select([instructor, semester.columns.semester_id])
+    stmt = select([instructor, course.columns.semester_id])
     stmt = stmt.select_from(((semester\
                         .join(course, course.columns.semester_id == semester.columns.semester_id))\
                         .join(instructor, course.columns.course_id == instructor.columns.course_id)
                         ))    
-    stmt = stmt.group_by(semester.columns.semester_id)
 
     results =conn.execute(stmt).fetchall()
+    print(results)
+    sem_lst=[]
     for i in range(len(results)):
-            sem_lst=[]
-            sem_lst[i] = results[i].semester_id
-            
-    sem_tup=tuple(sem_lst)
+            sem_lst.append( results[i].semester_id)
+    sem_tup=list(set(sem_lst))
 
-    for i in range(len(sem_lst)):
+    final_dct= dict()
+    final_lst=[]
+
+    for i in range(len(sem_tup)):
             semdct=dict()
             lst=[]
             for j in range (len(results)):
                 if sem_tup[i]==results[j].semester_id:
                     semdct['semester_id']=results[j].semester_id
-                    section_dict = dict()
-                    section_dict['section_id'] = results[j].section_id
-                    section_dict['room'] = results[j].room
-                    lst.append(section_dict)   
-            return jsonify({
-            'section': lst,
-            'semester':semdct
+                    instructor_dict = dict()
+                    instructor_dict['instructor_id'] = results[j].instructor_id
+                    instructor_dict['name'] = results[j].name
+                    lst.append(instructor_dict)   
+            final_dct={
+                'semester_id':sem_tup[i],
+                'section': lst
+            }
+            final_lst.append(final_dct)
+    return jsonify({
+            'output': final_lst
         })
             
 
