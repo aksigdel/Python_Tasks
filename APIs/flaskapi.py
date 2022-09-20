@@ -81,7 +81,7 @@ class Userinfo(Resource):
                 json_print(users)
             return jsonify({
                     'status': 200,
-                    'message': 'Uppercase update successful',
+                    'message': 'deletion successful',
                     'data': user_left
             })
         except ValueNotFound:

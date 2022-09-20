@@ -19,7 +19,7 @@ def home():
         )
 
 #API to returns  name, address( street | suite | city), website based on user id.
-@app.route('/api/users/<int:id>', methods=['GET'])
+@app.route('/users/<int:id>', methods=['GET'])
 def user_details(id):
     with open('data.json', mode='r', encoding='utf-8') as file:
         users = json.load(file)
@@ -38,7 +38,7 @@ def user_details(id):
             })
 
 # API to updates name and username to upper case based on user id and return updated data.
-@app.route('/api/upper_users/<int:id>', methods = ['PUT','GET'])
+@app.route('/upper_users/<int:id>', methods = ['PUT','GET'])
 def update_uppercase(id):
     try:
         with open('data.json', mode='r', encoding='utf-8') as file:
@@ -70,29 +70,44 @@ def update_uppercase(id):
         })
 
 # API to delete record and display response message based on user id.
-@app.route('/app/delete_users/<int:id>', methods=['DELETE','GET'])
+@app.route('/delete_users/<int:id>', methods=['DELETE','GET'])
 def delete_record(id):
     try:
         with open('data.json', mode='r',encoding='utf-8') as file:
             users=json.load(file)
+        id_found = False
         user_left=[]
         del_record=dict()
         for record in users:
-            if record['id'] != id:
-                user_left.append(record)
-            else:
-                del_record= record['id']
-                raise ValueNotFound
+            if record['id'] == id:
+                id_found = True
+                del_record = record
+                continue
+            user_left.append(record)
+        
+        if not id_found:
+            raise ValueNotFound
+        else:
+            with open('data.json', mode='w', encoding='utf-8') as file:
+                file.write(json.dumps(user_left, indent=4))
+            
+            return jsonify({
+                'status': 200,
+                'message': 'Record deletion successful',
+                'data': del_record,
+            })
+
     except ValueNotFound:
         return jsonify({
             'status': 404,
             'message': 'Record not found',
-            'data_id': del_record,
+            'data': {},
         })
+       
 
 
 #API to insert new record and display response message along with inserted data.
-@app.route('/api/insert_user', methods=['POST','GET'])
+@app.route('/insert_user', methods=['POST','GET'])
 def insert_user():
     #user_data=request.get_json()
     user_data = {
@@ -143,7 +158,7 @@ def insert_user():
 
 
 #API to return  city count and status in JSON format.
-@app.route('/api/city_count', methods=['GET'])
+@app.route('/city_count', methods=['GET'])
 def city_count():
     try:
         with open('data.json',mode='r',encoding='utf-8') as file:

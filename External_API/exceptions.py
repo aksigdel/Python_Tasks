@@ -3,3 +3,6 @@ class Error(Exception):
 
 class ValueNotFound(Error):
     pass
+
+class ValueDuplicate(Error):
+    pass
