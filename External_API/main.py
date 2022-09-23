@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_restful import Resource, Api
+from flask_restful import Api
 import json
 from exceptions import ValueNotFound, ValueDuplicate
 
@@ -26,7 +26,7 @@ def load_anime(id):
                         'type': anime['type'],
                         'status':anime['status']
                     })
-        except FileNotFoundError:
+        except Exception:
             return jsonify({
                 'status': 404,
                 'data': id,
@@ -50,7 +50,8 @@ def delete_anime(id):
             ani_me.append(record)
         
         if not id_found:
-            raise ValueNotFound
+            raise Exception
+
         else:
             with open('anime_example.json', mode='w', encoding='utf-8') as wfile:
                 wfile.write(json.dumps(ani_me, indent=4))
@@ -61,7 +62,7 @@ def delete_anime(id):
                 'data': del_record,
             })
 
-    except ValueNotFound:
+    except Exception:
         return jsonify({
             'status': 404,
             'message': 'Record not found',
@@ -104,7 +105,7 @@ def update_anime(id):
                         id_status=True
                         animelst.append(data)
             if not id_status:
-                    raise ValueNotFound 
+                    raise Exception 
             with open('anime_example.json', mode='w', encoding='utf-8') as wfile:
                 wfile.write(json.dumps(animelst, indent = 4))
             return jsonify({
@@ -112,7 +113,7 @@ def update_anime(id):
                 'data': data,
                 'message': 'Update successful'
             })
-        except ValueNotFound:
+        except Exception:
             return jsonify({
                 'status': 404,
                 'data': id,
@@ -157,7 +158,7 @@ def create_anime():
             'data': data,
         })
     
-    except ValueDuplicate:
+    except Exception:
         return jsonify({
             'status': 400,
             'message': 'duplicate id no creation',

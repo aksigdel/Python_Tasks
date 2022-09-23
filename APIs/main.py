@@ -52,7 +52,7 @@ def update_uppercase(id):
                 upper_case=record
                 break        
         if len(upper_case) == 0:
-            raise ValueNotFound
+            raise Exception
         else:
             with open('data.json', mode='w', encoding='utf-8') as file:
                 file.write(json.dumps(users, indent=4))
@@ -62,7 +62,7 @@ def update_uppercase(id):
                 'message': 'Uppercase update successful',
                 'data': upper_case,
             })
-    except ValueNotFound:
+    except Exception:
         return jsonify({
             'status': 404,
             'message': 'Record not found',
@@ -86,7 +86,7 @@ def delete_record(id):
             user_left.append(record)
         
         if not id_found:
-            raise ValueNotFound
+            raise Exception
         else:
             with open('data.json', mode='w', encoding='utf-8') as file:
                 file.write(json.dumps(user_left, indent=4))
@@ -97,7 +97,7 @@ def delete_record(id):
                 'data': del_record,
             })
 
-    except ValueNotFound:
+    except Exception:
         return jsonify({
             'status': 404,
             'message': 'Record not found',
@@ -139,7 +139,7 @@ def insert_user():
         
         for record in users:
             if record['id'] == user_data['id']:
-                raise ValueDuplicate
+                raise Exception
         users.append(user_data)
         with open('data.json', mode='w',encoding='utf-8') as wfile:
             wfile.write(json.dumps(users, indent=4))
@@ -149,7 +149,7 @@ def insert_user():
             'message': 'Inserted successfully',
             'data': user_data,
         })
-    except ValueDuplicate:
+    except Exception:
         return jsonify({
             'status': 400,
             'message': {'Invalid/duplicate input': id},
@@ -165,7 +165,7 @@ def city_count():
             loaded_data=json.load(file)
         cities=[data['address']['city'] for data in loaded_data]
         if len(cities) == 0:
-            raise ValueNotFound
+            raise Exception
         dictionary = {}
         for item in cities:
             dictionary[item] = dictionary.get(item, 0) + 1
@@ -174,7 +174,7 @@ def city_count():
             'message': 'Count of each city in the data successful',
             'data': dictionary,
         })
-    except ValueNotFound:
+    except Exception:
         return jsonify({
                 'status': 404,
                 'message': 'No records found',
