@@ -1,0 +1,20 @@
+Learning Management System(LMS):
+1. Users should be able to create programs, add semesters in programs, add courses in each semester, add sections, add students in semester programs, and add instructors in programs.
+2. Users should be able to view the total students and  instructor list, Number of students in [each semester, each program, each section].
+3. Users should be able to view courses that are taught each semester and show sections of each semester. show instructors of each semester.
+
+
+create program
+add semesters in programs
+add courses in semesters
+add sections
+add students in semester
+add instructor in programs
+
+program list
+students list
+instructor list
+
+courses, sections, instructors in each sem
+
+no of students in each sem , each program, each section
